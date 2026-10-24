@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Feliz cumpleaños, Edward</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    background: #000; color: #fff;
+    overflow: hidden;
+    font-family: "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px; text-align: center;
+  }
+  .text {
+    position: absolute;
+    max-width: 90vw;
+    font-weight: 600;
+    font-size: clamp(32px, 7vw, 80px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    opacity: 0;
+  }
+
+  /* Escena del logo */
+  .scene-logo {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 28px; padding: 24px; opacity: 0;
+  }
+  .scene-logo svg { width: clamp(64px, 14vw, 110px); height: auto; fill: #fff; }
+  .scene-logo p {
+    font-size: clamp(24px, 5.5vw, 56px);
+    font-weight: 600; letter-spacing: -0.02em; line-height: 1.1;
+    max-width: 90vw;
+  }
+
+  /* Video */
+  .video {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+  }
+  .video-wrap {
+    position: relative;
+    width: min(100vw, 960px);
+    aspect-ratio: 16 / 9;
+  }
+  .video-wrap video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+  /* Gift card */
+  .gift {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding: clamp(24px, 7vh, 64px) 20px 20px;
+    opacity: 0; visibility: hidden;
+  }
+  .gift-card {
+    background: #fff; color: #000;
+    width: min(100%, 520px);
+    border-radius: 24px;
+    padding: clamp(28px, 6vw, 44px) 24px clamp(12px, 3vw, 24px);
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .gift-card h3 {
+    font-weight: 600;
+    font-size: clamp(24px, 5.5vw, 40px);
+    line-height: 1.15; letter-spacing: -0.02em;
+  }
+  .gift-card img { width: min(70%, 300px); height: auto; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <h1 class="text" id="t1">Hola, Edward.</h1>
+    <h2 class="text" id="t2">Llegó tu día más esperado del año.</h2>
+    <h2 class="text" id="t3">Sabemos que Apple siempre te acompaña.</h2>
+    <h2 class="text" id="t4">Y hoy, es tu momento.</h2>
+
+    <div class="scene-logo" id="sceneLogo">
+      <svg id="logo" viewBox="0 0 24 24" aria-label="Apple" role="img">
+        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/>
+      </svg>
+      <p>Estás a un clic de descubrirlo.</p>
+    </div>
+
+    <section class="video" id="video">
+  <div class="video-wrap">
+    <video id="player" src="assets/video/smartwatch.mp4" playsinline preload="auto"></video>
+  </div>
+</section>
+
+    <section class="gift" id="gift">
+      <div class="gift-card" id="giftCard">
+        <h3>Feliz cumpleaños, Edward. Reclama tu bono.</h3>
+        <img src="assets/images/logo.png"
+             alt="Apple Gift Card">
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  
+  <script>
+    const ease = "power2.out";
+    
+    let ready = false;   // el click solo funciona al terminar la escena del logo
+    let blink, giftShown = false;
+
+    gsap.set(["#t1", "#t2", "#t3", "#t4", "#sceneLogo"], { y: 20, filter: "blur(8px)" });
+
+    const show = () => ({ opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, ease });
+    const hide = () => ({ opacity: 0, y: -20, filter: "blur(8px)", duration: 0.9, ease: "power2.in" });
+
+    const tl = gsap.timeline({ delay: 0.5 });
+    tl.to("#t1", show()).to("#t1", hide(), "+=1.4")
+      .to("#t2", show(), "+=0.3").to("#t2", hide(), "+=2")
+      .to("#t3", show(), "+=0.3").to("#t3", hide(), "+=2.2")
+      .to("#t4", show(), "+=0.3").to("#t4", hide(), "+=1.8")
+      .to("#sceneLogo", show(), "+=0.3")
+      .add(() => {
+        ready = true;
+        // Solo el logo parpadea; el texto se queda fijo
+        blink = gsap.to("#logo", { opacity: 0.15, duration: 0.9, ease: "sine.inOut", yoyo: true, repeat: -1 });
+      });
+
+    // Click o tap -> video
+   function playVideo() {
+  if (!ready) return;
+  ready = false;
+  if (blink) blink.kill();
+
+  const video = document.getElementById("player");
+
+  gsap.timeline()
+    .to("#sceneLogo", hide())
+    .set("#video", { visibility: "visible" })
+    .to("#video", { opacity: 1, duration: 1, ease });
+
+  video.play().catch(showGift);          // si falla la reproducción, salta a la gift card
+  video.addEventListener("ended", showGift);
+  video.addEventListener("error", showGift);
+}
+
+    // Al terminar el video -> gift card
+    function showGift() {
+      if (giftShown) return;
+      giftShown = true;
+      gsap.timeline()
+        .to("#video", { opacity: 0, duration: 0.8, ease: "power2.in" })
+        .set("#video", { visibility: "hidden" })
+        .set("#gift", { visibility: "visible", opacity: 1 })
+        .fromTo("#giftCard", { opacity: 0, y: 20, filter: "blur(8px)" }, show());
+    }
+
+    document.addEventListener("click", playVideo);
+    document.addEventListener("touchend", (e) => { if (ready) { e.preventDefault(); playVideo(); } }, { passive: false });
+  </script>
+</body>
+</html>
